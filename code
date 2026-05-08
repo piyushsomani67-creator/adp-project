@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recipe Sharing Platform</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+body { background-color: #f8f9fa; }
+.hero { background: url('https://images.unsplash.com/photo-1490645935967-10de6ba17061')
+center/cover; height: 300px; color: white; display:flex; align-items:center; justify-content:center; }
+.card:hover { transform: scale(1.03); transition: 0.3s; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+function Navbar({ setPage }) {
+return (
+<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+<div className="container">
+<a className="navbar-brand" href="#">RecipeShare</a>
+<div>
+<button className="btn btn-outline-light me-2" onClick={() =>
+setPage('home')}>Home</button>
+<button className="btn btn-outline-light me-2" onClick={() =>
+setPage('explore')}>Explore</button>
+<button className="btn btn-outline-light" onClick={() => setPage('add')}>Add
+Recipe</button>
+</div>
+</div>
+</nav>
+);
+}
+
+function Home() {
+return (
+<div>
+<div className="hero">
+<h1>Discover & Share Delicious Recipes</h1>
+</div>
+<div className="container mt-5">
+<h3>Welcome to RecipeShare</h3>
+<p>Explore thousands of recipes or share your own creations with the world.</p>
+</div>
+</div>
+);
+}
+function Explore({ recipes, saveRecipe }) {
+return (
+<div className="container mt-4">
+<h2>Explore Recipes</h2>
+<div className="row">
+{recipes.map((recipe, index) => (
+<div className="col-md-4 mb-3" key={index}>
+<div className="card">
+<img src={recipe.image} className="card-img-top" alt="recipe" />
+<div className="card-body">
+<h5>{recipe.title}</h5>
+<button className="btn btn-primary" onClick={() =>
+
+saveRecipe(recipe)}>Save</button>
+
+</div>
+</div>
+</div>
+))}
+</div>
+</div>
+);
+}
+function AddRecipe({ addRecipe }) {
+const [title, setTitle] = useState('');
+const [image, setImage] = useState('');
+const handleSubmit = (e) => {
+e.preventDefault();
+addRecipe({ title, image });
+
+setTitle('');
+setImage('');
+};
+return (
+<div className="container mt-4">
+<h2>Add Recipe</h2>
+<form onSubmit={handleSubmit}>
+<input className="form-control mb-2" placeholder="Recipe Title" value={title}
+onChange={(e) => setTitle(e.target.value)} />
+<input className="form-control mb-2" placeholder="Image URL" value={image}
+onChange={(e) => setImage(e.target.value)} />
+<button className="btn btn-success">Add</button>
+</form>
+</div>
+);
+}
+function Saved({ saved }) {
+return (
+<div className="container mt-4">
+<h2>Saved Recipes</h2>
+<ul className="list-group">
+{saved.map((r, i) => (
+<li className="list-group-item" key={i}>{r.title}</li>
+))}
+</ul>
+</div>
+);
+}
+function App() {
+const [page, setPage] = useState('home');
+const [recipes, setRecipes] = useState([
+{ title: 'Pasta', image: 'https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83'
+},
+{ title: 'Burger', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349' }
+]);
+const [saved, setSaved] = useState([]);
+const addRecipe = (recipe) => setRecipes([...recipes, recipe]);
+const saveRecipe = (recipe) => setSaved([...saved, recipe]);
+
+return (
+<div>
+<Navbar setPage={setPage} />
+{page === 'home' && <Home />}
+{page === 'explore' && <Explore recipes={recipes} saveRecipe={saveRecipe} />}
+{page === 'add' && <AddRecipe addRecipe={addRecipe} />}
+{page === 'saved' && <Saved saved={saved} />}
+</div>
+);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
